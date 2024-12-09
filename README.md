@@ -1,36 +1,64 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Academic Jobs Platform
+
+A platform connecting students, employers, and guidance counselors to create meaningful academic employment opportunities.
+
+## Features
+
+### Landing Page
+- Hero section with Gmail sign-in and job browsing options
+- Feature sections for all user types:
+  - Students
+  - Employers
+  - Guidance Counselors
+- Responsive design using Tailwind CSS
+- Footer with essential links
+
+### Planned Features
+
+#### For Students
+- Gmail account integration
+- Job search functionality
+- Resume builder and management
+- Application tracking
+- Personalized recommendations
+
+#### For Employers
+- Job posting capabilities
+- Application review system
+- Candidate management
+- Job requirement specifications
+  - Subject categorization
+  - Location settings
+  - Pay rate information
+
+#### For Guidance Counselors
+- Student application review
+- Draft sharing capabilities
+- Communication system
+- Administrative backend panel
+- Job recommendation system
+
+## Development Notes
+
+### Recent Changes
+- Created initial landing page
+- Implemented responsive design
+- Updated text colors to black for better readability in feature sections
+
+### Next Steps
+- Implement login system with Gmail integration
+- Create search functionality
+- Develop separate dashboards for each user type
+- Build application system
 
 ## Getting Started
 
-First, run the development server:
+[Add installation and setup instructions here]
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## Contributing
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+[Add contribution guidelines here]
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## License
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+[Add license information here]
