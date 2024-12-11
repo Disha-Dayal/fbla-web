@@ -1,4 +1,7 @@
-import Image from "next/image";
+export const metadata = {
+  title: 'Academic Jobs Platform',
+  description: 'Connect students with academic opportunities',
+};
 
 export default function Home() {
   return (
