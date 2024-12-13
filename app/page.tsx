@@ -1,9 +1,30 @@
-export const metadata = {
-  title: 'Academic Jobs Platform',
-  description: 'Connect students with academic opportunities',
-};
+'use client'
+import { useEffect, useState } from 'react'
+import '../utils/auth'
+import SignInModal from '@/components/SignInModal'
 
 export default function Home() {
+  const [isSignInOpen, setIsSignInOpen] = useState(false)
+
+  useEffect(() => {
+    const initializeGoogleSignIn = () => {
+      if (typeof window !== 'undefined' && window.google && isSignInOpen) {
+        const { google } = window
+        google.accounts.id.initialize({
+          client_id: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID!,
+          callback: window.handleSignInWithGoogle,
+        })
+
+        google.accounts.id.renderButton(
+          document.getElementById("googleSignInDiv")!,
+          { theme: "outline", size: "large" }
+        )
+      }
+    }
+
+    initializeGoogleSignIn()
+  }, [isSignInOpen])
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-white to-gray-50">
       {/* Hero Section */}
@@ -19,9 +40,12 @@ export default function Home() {
           
           {/* Call to Action Buttons */}
           <div className="mt-10 flex gap-4 justify-center">
-            <a href="/login" className="rounded-md bg-maroon-600 px-6 py-3 text-white font-semibold hover:bg-maroon-700 transition-colors">
-              Sign In with Gmail
-            </a>
+            <button
+              onClick={() => setIsSignInOpen(true)}
+              className="rounded-md bg-maroon-600 px-6 py-3 text-white font-semibold hover:bg-maroon-700 transition-colors"
+            >
+              Sign In
+            </button>
             <a href="/browse" className="rounded-md bg-gray-100 px-6 py-3 text-gray-700 font-semibold hover:bg-gray-200 transition-colors">
               Browse Jobs
             </a>
@@ -64,6 +88,11 @@ export default function Home() {
           </div>
         </div>
       </main>
+
+      <SignInModal 
+        isOpen={isSignInOpen} 
+        onClose={() => setIsSignInOpen(false)} 
+      />
 
       {/* Footer */}
       <footer className="bg-gray-50 border-t border-gray-200 py-12 px-4">
