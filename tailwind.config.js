@@ -9,10 +9,15 @@ module.exports = {
     extend: {
       colors: {
         maroon: {
-          600: '#800000',
-          700: '#660000',
+          100: '#FFE5E5',
+          200: '#FFB3B3',
+          600: '#6B0F1A',
         },
       },
+      fontFamily: {
+        cormorant: ['Cormorant Garamond', 'serif'],
+        arial: ['Arial', 'sans-serif'],
+      }
     },
   },
   plugins: [],

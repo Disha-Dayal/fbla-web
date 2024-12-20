@@ -2,9 +2,31 @@
 import { useEffect, useState } from 'react'
 import '../utils/auth'
 import SignInModal from '@/components/SignInModal'
+import Link from 'next/link'
 
 export default function Home() {
   const [isSignInOpen, setIsSignInOpen] = useState(false)
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      window.handleSignInWithGoogle = async (response: CredentialResponse) => {
+        try {
+          const { data, error } = await supabase.auth.signInWithIdToken({
+            provider: 'google',
+            // ... other necessary parameters ...
+          });
+
+          if (error) {
+            console.error('Error signing in with Google:', error);
+          } else {
+            console.log('Signed in successfully:', data);
+          }
+        } catch (err) {
+          console.error('Unexpected error:', err);
+        }
+      };
+    }
+  }, []);
 
   useEffect(() => {
     const initializeGoogleSignIn = () => {
@@ -26,87 +48,102 @@ export default function Home() {
   }, [isSignInOpen])
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-white to-gray-50">
-      {/* Hero Section */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-16">
+    <div className="h-screen bg-[#F8F1EE] text-[#660000] relative flex flex-col">
+      {/* Geometric Background - same position */}
+      <div className="absolute top-0 left-0 w-1/2 h-1/2 bg-[#660000] opacity-5 rounded-br-3xl animate-float"></div>
+      <div className="absolute bottom-1/4 right-0 w-2/3 h-1/3 bg-[#660000] opacity-5 rounded-tl-3xl animate-float-reverse"></div>
+      <div className="absolute bottom-0 left-1/4 w-1/2 h-1/3 bg-[#660000] opacity-5 rounded-tr-3xl animate-float" 
+        style={{animationDelay: '2s'}}
+      ></div>
+
+      {/* Header - kept compact */}
+      <header className="relative z-10 bg-[#F8F1EE] shadow-sm">
+        <div className="max-w-7xl mx-auto px-6 h-12 flex items-center justify-between">
+          <h1 className="text-2xl font-cormorant font-bold text-[#660000]">Inspira</h1>
+          <button
+            onClick={() => setIsSignInOpen(true)}
+            className="px-5 py-1.5 rounded-md text-[#660000] border border-[#B89F8D] hover:bg-[#F2E6E0] transition font-medium"
+          >
+            Sign In
+          </button>
+        </div>
+      </header>
+
+      {/* Main Content - evenly spaced */}
+      <main className="relative z-10 flex-1 flex flex-col justify-evenly max-w-6xl mx-auto px-6">
+        {/* Hero Section - removed margins */}
         <div className="text-center">
-          <h1 className="text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl md:text-6xl">
-            <span className="block">Connect Students with</span>
-            <span className="block text-maroon-600">Academic Opportunities</span>
-          </h1>
-          <p className="mt-3 max-w-md mx-auto text-base text-gray-500 sm:text-lg md:mt-5 md:text-xl md:max-w-3xl">
-            A platform connecting students, employers, and guidance counselors to create meaningful academic employment opportunities.
+          <h2 className="text-4xl font-cormorant font-bold mb-4 text-[#660000]">
+            Inspira
+          </h2>
+          <p className="text-lg font-arial text-[#8B5E3C] mb-6 max-w-2xl mx-auto">
+            Unlock academic opportunities through a platform that empowers students, counselors, and employers to connect and thrive together.
           </p>
-          
-          {/* Call to Action Buttons */}
-          <div className="mt-10 flex gap-4 justify-center">
-            <button
-              onClick={() => setIsSignInOpen(true)}
-              className="rounded-md bg-maroon-600 px-6 py-3 text-white font-semibold hover:bg-maroon-700 transition-colors"
+          <div className="flex justify-center">
+            <Link
+              href="/signup"
+              className="px-8 py-2.5 bg-[#660000] text-white rounded-md hover:bg-[#7D0A0A] transition font-medium"
             >
-              Sign In
-            </button>
-            <a href="/browse" className="rounded-md bg-gray-100 px-6 py-3 text-gray-700 font-semibold hover:bg-gray-200 transition-colors">
-              Browse Jobs
-            </a>
+              Get Started
+            </Link>
           </div>
         </div>
 
         {/* Features Grid */}
-        <div className="mt-24 grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
-          {/* Students Section */}
-          <div className="bg-white p-6 rounded-lg shadow-sm">
-            <h2 className="text-xl font-semibold mb-4 text-black">For Students</h2>
-            <ul className="space-y-2 text-gray-600">
-              <li>• Explore Job Opportunities</li>
-              <li>• Create and Manage Resumes</li>
-              <li>• Find Personalized Job Matches</li>
-              <li>• Track Your Progress</li>
+        <div className="grid md:grid-cols-3 gap-8">
+          <div className="bg-white/90 backdrop-blur-sm p-6 rounded-lg shadow-sm h-60 flex flex-col">
+            <h2 className="text-lg font-bold mb-4 text-[#660000]">For Students</h2>
+            <ul className="space-y-3 text-sm font-arial text-[#8B5E3C] flex-grow">
+              <li>• Browse Academic Jobs & Internships</li>
+              <li>• Connect with Career Counselors</li>
+              <li>• Track Your Applications</li>
+              <li>• Get Career Development Support</li>
+              <li>• Access Learning Resources</li>
             </ul>
           </div>
 
-          {/* Employers Section */}
-          <div className="bg-white p-6 rounded-lg shadow-sm">
-            <h2 className="text-xl font-semibold mb-4 text-black">For Employers</h2>
-            <ul className="space-y-2 text-gray-600">
-              <li>• Post and Manage Listings</li>
-              <li>• Connect with Qualified Candidates</li>
-              <li>• Set Job Requirements</li>
-              <li>• Review Applications</li>
+          <div className="bg-white/90 backdrop-blur-sm p-6 rounded-lg shadow-sm h-60 flex flex-col">
+            <h2 className="text-lg font-bold mb-4 text-[#660000]">For Employers</h2>
+            <ul className="space-y-3 text-sm font-arial text-[#8B5E3C] flex-grow">
+              <li>• Post Academic Positions</li>
+              <li>• Find Top Candidates</li>
+              <li>• Manage Applications Easily</li>
+              <li>• Connect with Institutions</li>
+              <li>• View Recruitment Analytics</li>
             </ul>
           </div>
 
-          {/* Counselors Section */}
-          <div className="bg-white p-6 rounded-lg shadow-sm">
-            <h2 className="text-xl font-semibold mb-4 text-black">For Counselors</h2>
-            <ul className="space-y-2 text-gray-600">
-              <li>• Review Applications and Provide Recommendations</li>
-              <li>• Analyze Student Job Trends</li>
-              <li>• Track Student rogress</li>
-              <li>• Facilitate Career Workshops or Events</li>
+          <div className="bg-white/90 backdrop-blur-sm p-6 rounded-lg shadow-sm h-60 flex flex-col">
+            <h2 className="text-lg font-bold mb-4 text-[#660000]">For Counselors</h2>
+            <ul className="space-y-3 text-sm font-arial text-[#8B5E3C] flex-grow">
+              <li>• Review Student Applications</li>
+              <li>• Write Recommendations</li>
+              <li>• Monitor Student Progress</li>
+              <li>• Host Career Workshops</li>
+              <li>• Access Support Tools</li>
             </ul>
           </div>
         </div>
       </main>
 
+      {/* Footer - reduced top padding */}
+      <footer className="relative z-10 bg-[#F8F1EE] border-t border-[#B89F8D] py-2 px-6">
+        <div className="max-w-6xl mx-auto flex justify-between items-center">
+          <div className="text-sm text-[#8B5E3C] pl-2">
+            © 2024 Inspira. All rights reserved.
+          </div>
+          <div className="flex gap-8">
+            <a href="/about" className="text-sm text-[#8B5E3C] hover:text-[#660000] transition">About</a>
+            <a href="/contact" className="text-sm text-[#8B5E3C] hover:text-[#660000] transition">Contact</a>
+            <a href="/privacy" className="text-sm text-[#8B5E3C] hover:text-[#660000] transition">Privacy</a>
+          </div>
+        </div>
+      </footer>
+
       <SignInModal 
         isOpen={isSignInOpen} 
         onClose={() => setIsSignInOpen(false)} 
       />
-
-      {/* Footer */}
-      <footer className="bg-gray-50 border-t border-gray-200 py-12 px-4">
-        <div className="max-w-7xl mx-auto flex justify-between items-center">
-          <div className="text-sm text-gray-500">
-            © 2024 Academic Jobs Platform
-          </div>
-          <div className="flex gap-6">
-            <a href="/about" className="text-sm text-gray-500 hover:text-gray-900">About</a>
-            <a href="/contact" className="text-sm text-gray-500 hover:text-gray-900">Contact</a>
-            <a href="/privacy" className="text-sm text-gray-500 hover:text-gray-900">Privacy</a>
-          </div>
-        </div>
-      </footer>
     </div>
-  );
+  )
 }
