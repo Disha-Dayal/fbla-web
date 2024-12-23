@@ -7,45 +7,6 @@ import Link from 'next/link'
 export default function Home() {
   const [isSignInOpen, setIsSignInOpen] = useState(false)
 
-  useEffect(() => {
-    if (typeof window !== 'undefined') {
-      window.handleSignInWithGoogle = async (response: CredentialResponse) => {
-        try {
-          const { data, error } = await supabase.auth.signInWithIdToken({
-            provider: 'google',
-            // ... other necessary parameters ...
-          });
-
-          if (error) {
-            console.error('Error signing in with Google:', error);
-          } else {
-            console.log('Signed in successfully:', data);
-          }
-        } catch (err) {
-          console.error('Unexpected error:', err);
-        }
-      };
-    }
-  }, []);
-
-  useEffect(() => {
-    const initializeGoogleSignIn = () => {
-      if (typeof window !== 'undefined' && window.google && isSignInOpen) {
-        const { google } = window
-        google.accounts.id.initialize({
-          client_id: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID!,
-          callback: window.handleSignInWithGoogle,
-        })
-
-        google.accounts.id.renderButton(
-          document.getElementById("googleSignInDiv")!,
-          { theme: "outline", size: "large" }
-        )
-      }
-    }
-
-    initializeGoogleSignIn()
-  }, [isSignInOpen])
 
   return (
     <div className="h-screen bg-[#F8F1EE] text-[#660000] relative flex flex-col">
@@ -60,12 +21,14 @@ export default function Home() {
       <header className="relative z-10 bg-[#F8F1EE] shadow-sm">
         <div className="max-w-7xl mx-auto px-6 h-12 flex items-center justify-between">
           <h1 className="text-2xl font-cormorant font-bold text-[#660000]">Inspira</h1>
-          <button
-            onClick={() => setIsSignInOpen(true)}
-            className="px-5 py-1.5 rounded-md text-[#660000] border border-[#B89F8D] hover:bg-[#F2E6E0] transition font-medium"
-          >
-            Sign In
-          </button>
+          <div>
+            <button
+              onClick={() => setIsSignInOpen(true)}
+              className="px-5 py-1.5 rounded-md bg-[#660000] text-white font-arial font-medium hover:bg-[#7D0A0A] transition"
+            >
+              Sign In
+            </button>
+          </div>
         </div>
       </header>
 

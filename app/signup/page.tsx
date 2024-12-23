@@ -3,17 +3,10 @@ import { useState } from 'react'
 import { supabase } from '@/utils/supabase'
 import { useRouter } from 'next/navigation'
 import BackButton from '@/components/BackButton'
-import Script from 'next/script'
+import SignInModal from '@/components/SignInModal'
 
 type UserType = 'student' | 'counselor' | 'employer'
 
-// First, add window type declaration at the top of the file
-declare global {
-  interface Window {
-    handleSignInWithGoogle: (response: CredentialResponse) => Promise<void>;
-    google: any;
-  }
-}
 
 export default function SignUp() {
   const router = useRouter()
@@ -28,6 +21,7 @@ export default function SignUp() {
   })
   const [showTooltip, setShowTooltip] = useState(false)
   const [tooltipPosition, setTooltipPosition] = useState({ top: 0, left: 0 })
+  const [isSignInOpen, setIsSignInOpen] = useState(false)
 
   const handleUserTypeSelect = (type: UserType) => {
     setUserType(type)
@@ -51,7 +45,12 @@ export default function SignUp() {
       })
 
       if (error) throw error
-      router.push('/verification')
+      
+      if (userType === 'employer') {
+        router.push('/employer')
+      } else {
+        router.push('/verification')
+      }
     } catch (error) {
       console.error('Error signing up:', error)
     }
@@ -66,12 +65,22 @@ export default function SignUp() {
     setShowTooltip(true)
   }
 
-  const handleGoogleScriptLoad = () => {
-    if (typeof window !== 'undefined') {
-      window.google?.accounts.id.initialize({
-        client_id: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID,
-        callback: window.handleSignInWithGoogle,
-      })
+  const handleGoogleSignIn = async () => {
+    if (!userType) {
+      alert('Please select your role, then sign in with Google')
+      return
+    }
+
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: 'google',
+      options: {
+        queryParams: {
+          user_type: userType
+        }
+      }
+    })
+    if (error) {
+      console.error('Error signing in with Google:', error.message)
     }
   }
 
@@ -82,24 +91,18 @@ export default function SignUp() {
       <div className="absolute bottom-1/4 right-0 w-2/3 h-1/3 bg-[#660000] opacity-5 rounded-tl-3xl animate-float-reverse"></div>
       <div className="absolute bottom-0 left-1/4 w-1/2 h-1/3 bg-[#660000] opacity-5 rounded-tr-3xl animate-float" style={{animationDelay: '2s'}}></div>
 
-      {/* Add Google Script */}
-      <Script
-        src="https://accounts.google.com/gsi/client"
-        onLoad={handleGoogleScriptLoad}
-        strategy="lazyOnload"
-      />
-
       {/* Back Button */}
       <BackButton onClick={step === 2 ? () => setStep(1) : undefined} />
 
       {/* Page Container */}
       <div className="flex items-center justify-center min-h-screen px-4 relative z-10">
-        <div className="w-full max-w-4xl bg-white p-12 rounded-2xl shadow-2xl">
+        {/* White box - slightly reduced width */}
+        <div className="w-full max-w-4xl bg-white p-8 rounded-2xl shadow-2xl max-h-[90vh] overflow-auto">
           {step === 1 ? (
             <div>
-              <h1 className="text-5xl font-cormorant font-bold text-center mb-8 text-[#660000]">I am a...</h1>
-              {/* Grid Layout */}
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <h1 className="text-4xl font-cormorant font-bold text-center mb-6 text-[#660000]">I am a...</h1>
+              {/* Grid Layout - reduce gap */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <button
                   onClick={() => handleUserTypeSelect('student')}
                   className="bg-[#660000] text-white p-6 rounded-lg shadow-md hover:bg-[#7D0A0A] transition"
@@ -132,8 +135,8 @@ export default function SignUp() {
               </div>
             </div>
           ) : (
-            <form onSubmit={handleSignUp} className="space-y-6">
-              <h2 className="text-4xl font-cormorant font-bold text-center text-[#660000] mb-6">
+            <form onSubmit={handleSignUp} className="space-y-4">
+              <h2 className="text-3xl font-cormorant font-bold text-center text-[#660000] mb-4">
                 Create Account
               </h2>
               <div className="relative">
@@ -216,44 +219,57 @@ export default function SignUp() {
                 </div>
               )}
 
-              <div className="flex justify-center gap-4">
-                <button
-                  type="button"
-                  onClick={() => window.google?.accounts.id.prompt()}
-                  className="flex-1 py-3 px-8 border rounded-md text-sm font-medium text-[#660000] bg-white hover:bg-gray-50 transition flex items-center justify-center gap-2"
-                >
-                  <svg viewBox="0 0 48 48" className="w-5 h-5">
-                    <path
-                      fill="#FFC107"
-                      d="M43.611,20.083H42V20H24v8h11.303c-1.649,4.657-6.08,8-11.303,8c-6.627,0-12-5.373-12-12c0-6.627,5.373-12,12-12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C12.955,4,4,12.955,4,24c0,11.045,8.955,20,20,20c11.045,0,20-8.955,20-20C44,22.659,43.862,21.35,43.611,20.083z"
-                    />
-                    <path
-                      fill="#FF3D00"
-                      d="M6.306,14.691l6.571,4.819C14.655,15.108,18.961,12,24,12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C16.318,4,9.656,8.337,6.306,14.691z"
-                    />
-                    <path
-                      fill="#4CAF50"
-                      d="M24,44c5.166,0,9.86-1.977,13.409-5.192l-6.19-5.238C29.211,35.091,26.715,36,24,36c-5.202,0-9.619-3.317-11.283-7.946l-6.522,5.025C9.505,39.556,16.227,44,24,44z"
-                    />
-                    <path
-                      fill="#1976D2"
-                      d="M43.611,20.083H42V20H24v8h11.303c-0.792,2.237-2.231,4.166-4.087,5.571c0.001-0.001,0.002-0.001,0.003-0.002l6.19,5.238C36.971,39.205,44,34,44,24C44,22.659,43.862,21.35,43.611,20.083z"
-                    />
-                  </svg>
-                  Sign in with Google
-                </button>
-
+              <div className="flex justify-center">
                 <button
                   type="submit"
-                  className="flex-1 py-3 px-8 border rounded-md text-sm font-arial font-medium text-white bg-[#660000] hover:bg-[#7D0A0A] transition"
+                  className="w-full py-3 px-8 bg-[#660000] text-white rounded-md hover:bg-[#7D0A0A] transition font-arial font-medium text-sm"
                 >
-                  Sign Up
+                  Create Account
                 </button>
               </div>
+
+              {/* Add the divider and Google sign-in */}
+              <div className="mt-4">
+                <div className="relative">
+                  <div className="absolute inset-0 flex items-center">
+                    <div className="w-full border-t border-[#B89F8D]"></div>
+                  </div>
+                  <div className="relative flex justify-center text-sm">
+                    <span className="bg-white px-2 text-[#8B5E3C]">Or continue with</span>
+                  </div>
+                </div>
+
+                <div className="mt-4 flex justify-center">
+                  <button
+                    type="button"
+                    onClick={handleGoogleSignIn}
+                    className="w-full max-w-md flex items-center justify-center px-4 py-2 border border-[#B89F8D] rounded-md shadow-sm text-sm font-medium text-[#660000] bg-white hover:bg-[#F2E6E0] transition"
+                  >
+                    <img
+                      src="https://developers.google.com/identity/images/g-logo.png"
+                      alt="Google logo"
+                      className="w-5 h-5 mr-2"
+                    />
+                    Sign up with Google
+                  </button>
+                </div>
+              </div>
+
+              <p 
+                onClick={() => setIsSignInOpen(true)}
+                className="mt-4 text-center text-sm text-[#8B5E3C] cursor-pointer hover:text-[#660000] transition"
+              >
+                Already have an account? <span className="font-medium text-[#660000] hover:text-[#7D0A0A]">Sign In</span>
+              </p>
             </form>
           )}
         </div>
       </div>
+
+      <SignInModal 
+        isOpen={isSignInOpen} 
+        onClose={() => setIsSignInOpen(false)} 
+      />
     </div>
   )
 }
